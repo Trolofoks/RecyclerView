@@ -21,24 +21,27 @@ class MainActivity : AppCompatActivity(), PlantAdapter.Listener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         init()
+        launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                val imageId = it.data?.getIntExtra("Key0", 0)!!
+                val name = it.data?.getStringExtra("Key1")!!
+                val description = it.data?.getStringExtra("Key2")!!
+                adapter.addPlant(PlantModel(imageId, name, description))
+            }
+        }
     }
 
     private fun init() {
         binding.apply {
             rcView.layoutManager = GridLayoutManager(this@MainActivity, 3)
             rcView.adapter = adapter
-            launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                if (it.resultCode == RESULT_OK) {
-                    val imageId = it.data?.getIntExtra("Key0", 0)!!
-                    val name = it.data?.getStringExtra("Key1")!!
-                    val description = it.data?.getStringExtra("Key2")!!
-                    adapter.addPlant(PlantModel(imageId, name, description))
-                }
-                buttonAdd.setOnClickListener {
-                    val intent = Intent(this@MainActivity, EditActivity::class.java)
-                    launcher?.launch(intent)
-                }
+
+            buttonAdd.setOnClickListener {
+                Toast.makeText(this@MainActivity, "suc", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this@MainActivity, EditActivity::class.java)
+                launcher?.launch(intent)
             }
+
         }
     }
 
