@@ -9,17 +9,17 @@ import java.util.ArrayList
 
 //принимаем сигнал с интерефейса в виде listener
 class PlantAdapter(val listener: Listener): RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
-    val plantList = ArrayList<Plant>()
+    val plantModelList = ArrayList<PlantModel>()
     class PlantHolder(item: View): RecyclerView.ViewHolder(item) {
         val binding = PlantItemBinding.bind(item)
 
         //и сюда listener
-        fun bind(plant: Plant, listener: Listener) = with(binding){
-            im.setImageResource(plant.imageId)
-            tvTitle.text = plant.title
+        fun bind(plantModel: PlantModel, listener: Listener) = with(binding){
+            im.setImageResource(plantModel.imageId)
+            tvTitle.text = plantModel.title
             //тот самый onClick
             itemView.setOnClickListener {
-                listener.onCLick(plant)
+                listener.onCLick(plantModel)
 
             }
         }
@@ -32,20 +32,20 @@ class PlantAdapter(val listener: Listener): RecyclerView.Adapter<PlantAdapter.Pl
 
     override fun onBindViewHolder(holder: PlantHolder, position: Int) {
         //и сюда listener
-        holder.bind(plantList[position], listener)
+        holder.bind(plantModelList[position], listener)
     }
 
     override fun getItemCount(): Int {
-        return plantList.size
+        return plantModelList.size
     }
 
-    fun addPlant(plant: Plant){
-        plantList.add(plant)
+    fun addPlant(plantModel: PlantModel){
+        plantModelList.add(plantModel)
         notifyDataSetChanged()
     }
 
     //связующий интерфейс
     interface Listener{
-        fun onCLick(plant: Plant)
+        fun onCLick(plantModel: PlantModel)
     }
 }

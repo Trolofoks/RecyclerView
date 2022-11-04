@@ -1,24 +1,20 @@
 package com.example.recyclerview
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.recyclerview.databinding.ActivityMainBinding
 
 //конечно добавляем интерфейс с адаптера
 class MainActivity : AppCompatActivity(), PlantAdapter.Listener {
     lateinit var binding: ActivityMainBinding
+    private var launcher: ActivityResultLauncher<Intent>? = null
     //просит listener, даём
     private val adapter = PlantAdapter(this)
-    private val imageIdList = listOf(
-        R.drawable.plant1,
-        R.drawable.plant2,
-        R.drawable.plant3,
-        R.drawable.plant4,
-        R.drawable.plant5,
-    )
-    private var index = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,17 +27,27 @@ class MainActivity : AppCompatActivity(), PlantAdapter.Listener {
         binding.apply {
             rcView.layoutManager = GridLayoutManager(this@MainActivity, 3)
             rcView.adapter = adapter
-            buttonAdd.setOnClickListener {
-                if(index > 4) index = 0
-                val plant = Plant(imageIdList[index], "Plant $index")
-                adapter.addPlant(plant)
-                index++
+            launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == RESULT_OK) {
+                    val imageId = it.data?.getIntExtra("Key0", 0)!!
+                    val name = it.data?.getStringExtra("Key1")!!
+                    val description = it.data?.getStringExtra("Key2")!!
+                    adapter.addPlant(PlantModel(imageId, name, description))
+                }
+                buttonAdd.setOnClickListener {
+                    val intent = Intent(this@MainActivity, EditActivity::class.java)
+                    launcher?.launch(intent)
+                }
             }
         }
     }
 
+
     //имплементируем тот самый onClick
-    override fun onCLick(plant: Plant) {
-        Toast.makeText(this, "click on ${plant.title}", Toast.LENGTH_SHORT).show()
+    override fun onCLick(plantModel: PlantModel) {
+        //стандартный интент но более нечитаемо зато коротко
+        startActivity(Intent(this, ContentActivity::class.java).apply {
+            putExtra("Key", plantModel)
+        })
     }
 }
