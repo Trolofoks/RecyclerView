@@ -21,8 +21,10 @@ class MainActivity : AppCompatActivity(), PlantAdapter.Listener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         init()
+        //что делаем по возвращению с создания
         launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
+                //передаются данные отдельно(но лучше было передавать сериализейбл)
                 val imageId = it.data?.getIntExtra("Key0", 0)!!
                 val name = it.data?.getStringExtra("Key1")!!
                 val description = it.data?.getStringExtra("Key2")!!
@@ -33,11 +35,12 @@ class MainActivity : AppCompatActivity(), PlantAdapter.Listener {
 
     private fun init() {
         binding.apply {
+            //привязываем адаптер к рецайклеру
             rcView.layoutManager = GridLayoutManager(this@MainActivity, 3)
             rcView.adapter = adapter
 
             buttonAdd.setOnClickListener {
-                Toast.makeText(this@MainActivity, "suc", Toast.LENGTH_SHORT).show()
+                //запускаем создание растения
                 val intent = Intent(this@MainActivity, EditActivity::class.java)
                 launcher?.launch(intent)
             }

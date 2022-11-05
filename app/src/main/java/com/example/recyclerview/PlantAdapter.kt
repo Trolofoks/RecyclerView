@@ -17,7 +17,7 @@ class PlantAdapter(val listener: Listener): RecyclerView.Adapter<PlantAdapter.Pl
         fun bind(plantModel: PlantModel, listener: Listener) = with(binding){
             im.setImageResource(plantModel.imageId)
             tvTitle.text = plantModel.title
-            //тот самый onClick
+            //тот самый onClick, itemView это весь обьект
             itemView.setOnClickListener {
                 listener.onCLick(plantModel)
 
